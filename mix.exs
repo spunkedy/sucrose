@@ -17,7 +17,8 @@ defmodule Sucrose.MixProject do
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      name: "Sucrose"
     ]
   end
 
