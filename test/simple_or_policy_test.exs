@@ -3,12 +3,13 @@ defmodule SimpleOrPolicyTest do
   alias Sucrose.Middleware.SimpleOrPolicy
 
   defmodule SampleHandler do
-    def can_query?(%{child: :author}), do: false
-    def can_query?(_), do: true
+    def can_query?(%{child: :content}), do: :error_out
+    def can_query?(%{claim: :reader}), do: true
+    def can_query?(_), do: false
     def can_mutate?(_), do: true
   end
 
-  defmodule SimplePolicyTestSchema do
+  defmodule SimpleOrPolicyTestSchema do
     use Absinthe.Schema
 
     object :post do
@@ -48,9 +49,13 @@ defmodule SimpleOrPolicyTest do
 
     """
 
-    {:ok, %{data: res}} = Absinthe.run(query, SimplePolicyTestSchema, context: %{claim: :author})
+    claims = [:non_real_auto_false, :reader]
 
+    {:ok, %{data: res}} =
+      Absinthe.run(query, SimpleOrPolicyTestSchema, context: %{claims: claims})
+
+    # At this point we shouldn't have any content but all of the authors
     post = res["posts"] |> hd
-    assert is_nil(post["author"])
+    refute is_nil(post["author"])
   end
 end

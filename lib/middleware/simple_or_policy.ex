@@ -38,14 +38,15 @@ defmodule Sucrose.Middleware.SimpleOrPolicy do
 
   @error_message :no_proper_resolution_or_config
 
-  def call(resolution = %{context: %{claim: _}}, %{handler: handler}) do
+  def call(resolution = %{context: %{claims: claims}}, %{handler: handler}) do
     check = simple_resolution(resolution)
 
-    response =
-      case check do
-        %{parent: :mutation} -> handler.can_mutate?(check)
-        _ -> handler.can_query?(check)
-      end
+    response = claims_check(check, claims, handler)
+    # IO.puts("\n\nBEGIN")
+    # IO.inspect(response)
+    # IO.inspect("For: #{inspect(Map.take(check, [:child, :parent]))}")
+    # IO.inspect("For Claims: #{inspect(claims)}")
+    # IO.puts("END\n\n")
 
     case response do
       {:ok, _} -> resolution
@@ -67,13 +68,16 @@ defmodule Sucrose.Middleware.SimpleOrPolicy do
   def claims_check(_check, [], _handler, last), do: last
 
   def claims_check(check, [head | rest], handler, last) do
-    new_check = Map.put(check, %{claim: head})
+    new_check = Map.put(check, :claim, head)
 
     current_claim_check =
       case new_check do
         %{from: :mutation} -> handler.can_mutate?(new_check)
-        _ -> handler.can_access?(new_check)
+        _ -> handler.can_query?(new_check)
       end
+
+    # IO.inspect("For: #{inspect(Map.take(new_check, [:child, :parent, :claim]))}")
+    # IO.inspect(current_claim_check)
 
     case current_claim_check do
       # immediate exits
@@ -82,7 +86,7 @@ defmodule Sucrose.Middleware.SimpleOrPolicy do
       :error_out -> :error
       {:error_out, msg} -> {:error, msg}
       # Continue on for anything else
-      _ -> claims_check(current_claim_check, rest, handler, last)
+      _ -> claims_check(check, rest, handler, last)
     end
   end
 
@@ -100,14 +104,12 @@ defmodule Sucrose.Middleware.SimpleOrPolicy do
   @spec simple_resolution(map()) :: %{
           child: :atom,
           parent: :atom,
-          claim: any(),
           resolution: map()
         }
   def simple_resolution(resolution) do
     %{
       child: resolution.definition.schema_node.identifier,
       parent: resolution.parent_type.identifier,
-      claim: resolution.context.claim,
       resolution: resolution
     }
   end

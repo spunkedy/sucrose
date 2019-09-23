@@ -4,6 +4,15 @@ defmodule Sucrose.MixProject do
   def project do
     [
       app: :sucrose,
+      package: %{
+        description: """
+        Absinthe Policies
+        """,
+        licenses: ["MIT"],
+        links: %{
+          "github" => "https://github.com/spunkedy/sucrose"
+        }
+      },
       version: "0.1.0",
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
