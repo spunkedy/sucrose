@@ -21,7 +21,7 @@ defmodule Sucrose.Middleware.SimpleOrPolicy do
   [:author, :owner, :reader]
   ```
 
-  For a mutation of deleting you might be ok with an `:author` or an ':owner`
+  For a mutation of deleting you might be ok with an `:author` or an `:owner`
   coming through and being able to delete a post.
 
   This Policy will stop the first chance it gets with a `true` condition.
