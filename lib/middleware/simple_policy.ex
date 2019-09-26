@@ -1,14 +1,14 @@
 defmodule Sucrose.Middleware.SimplePolicy do
   alias Absinthe.Resolution
-  require Logger
+  alias Sucrose.Common
 
   @behaviour Absinthe.Middleware
   @moduledoc """
   This is a simple policy handler that takes a very simple approach to absinthe resolution handling
   The basis for all of the handlers is to have a common response type:
 
-  true, false, :ok, :error, {:ok, _}, {:error, message}
-
+  To use this policy you must return the common return handler.
+  `Sucrose.Common.handle_response/2`
   """
 
   @error_message :no_proper_resolution_or_config
@@ -22,13 +22,7 @@ defmodule Sucrose.Middleware.SimplePolicy do
         _ -> handler.can_query?(check)
       end
 
-    case response do
-      {:ok, _} -> resolution
-      :ok -> resolution
-      true -> resolution
-      {:error, msg} -> handle_error(check, msg)
-      _ -> handle_error(check)
-    end
+    Common.handle_response(response, check)
   rescue
     _ ->
       {:error, @error_message}
@@ -36,17 +30,6 @@ defmodule Sucrose.Middleware.SimplePolicy do
 
   def call(_, _) do
     {:error, @error_message}
-  end
-
-  @doc """
-  This is the default error handler to put when we want to deny something.
-  """
-  def handle_error(check, message \\ "Unauthorized") do
-    Logger.warn(fn ->
-      "Erroring out for: #{inspect(Map.take(check, [:child, :parent, :claim]))}"
-    end)
-
-    Resolution.put_result(check.resolution, {:error, message})
   end
 
   @spec simple_resolution(map()) :: %{
