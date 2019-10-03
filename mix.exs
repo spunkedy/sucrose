@@ -13,7 +13,7 @@ defmodule Sucrose.MixProject do
           "github" => "https://github.com/spunkedy/sucrose"
         }
       },
-      version: "0.1.2",
+      version: "0.1.3",
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,

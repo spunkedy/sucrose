@@ -57,7 +57,7 @@ defmodule Sucrose do
   alias Sucrose.Middleware.SimplePolicy
   def middleware(middleware, _field, %Absinthe.Type.Object{identifier: _ident}) do
     [
-      {SimplerPolicy, %{handler: SampleHandler}}
+      {SimplePolicy, %{handler: SampleHandler}}
     ] ++
     middleware ++
     []

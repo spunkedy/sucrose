@@ -46,8 +46,12 @@ defmodule Sucrose.Common do
 
       true ->
         check.resolution
-        # {:error, msg} -> handle_error(check, msg)
-        # _ -> handle_error(check)
+
+      {:error, msg} ->
+        handle_error(check, msg)
+
+      _ ->
+        handle_error(check)
     end
   end
 end
