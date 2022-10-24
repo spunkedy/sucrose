@@ -13,7 +13,7 @@ defmodule Sucrose.MixProject do
           "github" => "https://github.com/spunkedy/sucrose"
         }
       },
-      version: "0.1.3",
+      version: "0.1.4",
       elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -39,8 +39,8 @@ defmodule Sucrose.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:absinthe, "~> 1.4.0"},
-      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
+      {:absinthe, "~> 1.7.0"},
+      {:ex_doc, "~> 0.29.0", only: :dev, runtime: false}
 
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
